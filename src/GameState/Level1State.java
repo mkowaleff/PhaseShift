@@ -4,6 +4,8 @@ import TileMap.*;
 import Entity.*;
 import Main.GamePanel;
 import Entity.Enemies.*;
+import Audio.AudioPlayer;
+
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ public class Level1State extends GameState {
 	
 	private ArrayList<Enemy> enemies; 
 	private ArrayList<Explosion> explosions;
+	
+	private AudioPlayer backgroundMusic;
 	
 	public Level1State(GameStateManager gsm) { 
 		this.gsm = gsm;
@@ -44,6 +48,9 @@ public class Level1State extends GameState {
 		explosions = new ArrayList<Explosion>();
 		
 		hud = new HUD(player);
+		
+		backgroundMusic = new AudioPlayer("/Music/levelsong.mp3");
+		//backgroundMusic.play();
 	}
 	
 	
