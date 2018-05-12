@@ -11,9 +11,13 @@ public class MenuState extends GameState {
 	private Background bg;
 	
 	private int currentChoice = 0;
-	private String[] options = {"New Game", "Help", "Exit"};
+	private String[] options = {"New Game", "Tutorial", "Help", "Exit"};
+	
 	private Color titleColor;
 	private Font titleFont;
+	
+	private Color creditsColor;
+	private Font creditsFont;
 	
 	private Font font; // regular font
 	
@@ -21,11 +25,16 @@ public class MenuState extends GameState {
 		this.gsm = gsm;
 		
 		try {
-			bg = new Background("/Backgrounds/aieye.jpg", 1);
+			//bg = new Background("/Backgrounds/aieye.jpg", 1);
+			bg = new Background("/Backgrounds/menubg2.gif", 1);
 			bg.setVector(-0.1,  0); // moving 0.1 pixels to the left
 			
 			titleColor = new Color(128, 0, 128);
-			titleFont = new Font("Century Gothic", Font.PLAIN, 28);
+			titleColor = Color.BLUE;
+			titleFont = new Font("Phosphate", Font.BOLD, 28);
+			
+			creditsColor = Color.RED;
+			creditsFont = new Font("Times New Roman", Font.PLAIN, 12);
 			
 			font = new Font("Arial", Font.PLAIN, 12);
 		}
@@ -49,7 +58,11 @@ public class MenuState extends GameState {
 		// draw title
 		g.setColor(titleColor);
 		g.setFont(titleFont);
-		g.drawString("Phase Shift", 80, 70);
+		g.drawString("Phase Shift", 100, 70);
+		
+		g.setColor(creditsColor);
+		g.setFont(creditsFont);
+		g.drawString("by Martin Kowaleff", 120, 85);
 		
 		// draw menu options
 		g.setFont(font);
@@ -70,9 +83,14 @@ public class MenuState extends GameState {
 			gsm.setState(GameStateManager.LEVEL1STATE);
 		}
 		if(currentChoice == 1) {
-			// help
+			// tutorial
+			gsm.setState(GameStateManager.TUTORIALSTATE);
 		}
 		if(currentChoice == 2) {
+			// help
+			gsm.setState(GameStateManager.HELPSTATE);
+		}
+		if(currentChoice == 3) {
 			// exit
 			System.exit(0);
 		}

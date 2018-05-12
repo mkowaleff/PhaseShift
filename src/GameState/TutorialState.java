@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.awt.Point;
 
 
-public class Level1State extends GameState {
+public class TutorialState extends GameState {
 	
 	private TileMap tileMap;
 	private Background bg;
@@ -25,7 +25,7 @@ public class Level1State extends GameState {
 	
 	private AudioPlayer backgroundMusic;
 	
-	public Level1State(GameStateManager gsm) { 
+	public TutorialState(GameStateManager gsm) { 
 		this.gsm = gsm;
 		init();
 	}
@@ -33,14 +33,14 @@ public class Level1State extends GameState {
 	public void init() {
 		
 		tileMap = new TileMap(30);
-		//tileMap.loadTiles("/Tilesets/grasstileset.gif");
-		tileMap.loadTiles("/Tilesets/moonTileSet.gif");
+		tileMap.loadTiles("/Tilesets/grasstileset.gif");
+		//tileMap.loadTiles("/Tilesets/moonTileSet.gif");
 		tileMap.loadMap("/Maps/level1-1.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
-		//bg = new Background("/Backgrounds/grassbg1.gif",0.1);
-		bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
+		bg = new Background("/Backgrounds/grassbg1.gif",0.1);
+		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
 		
 		player = new Player(tileMap);
 		player.setPosition(100, 100);
