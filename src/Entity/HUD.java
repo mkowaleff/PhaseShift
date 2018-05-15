@@ -6,11 +6,23 @@ import javax.imageio.ImageIO;
 
 public class HUD {
 	
-	private Player player;
+	private JazzPlayer player;
 	private BufferedImage image;
 	private Font font;
 	
 	public HUD(Player p) {
+		//player = p;
+		
+		try {
+			image = ImageIO.read(getClass().getResourceAsStream("/HUD/hud2.png"));
+			font = new Font("Arial", Font.PLAIN, 14);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public HUD(JazzPlayer p) {
 		player = p;
 		
 		try {

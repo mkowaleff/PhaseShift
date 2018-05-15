@@ -18,7 +18,7 @@ public class Level1State extends GameState {
 	private Background bg;
 	private HUD hud;
 	
-	private Player player;
+	private JazzPlayer player;
 	
 	private ArrayList<Enemy> enemies; 
 	private ArrayList<Explosion> explosions;
@@ -33,17 +33,18 @@ public class Level1State extends GameState {
 	public void init() {
 		
 		tileMap = new TileMap(30);
-		//tileMap.loadTiles("/Tilesets/grasstileset.gif");
-		tileMap.loadTiles("/Tilesets/moonTileSet.gif");
-		tileMap.loadMap("/Maps/level1-1.map");
+		tileMap.loadTiles("/Tilesets/grasstileset.gif");
+		//tileMap.loadTiles("/Tilesets/moonTileSet.gif");
+		//tileMap.loadMap("/Maps/level1-1.map");
+		tileMap.loadMap("/Maps/testBox.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
-		//bg = new Background("/Backgrounds/grassbg1.gif",0.1);
-		bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
+		bg = new Background("/Backgrounds/grassbg1.gif",0.1);
+		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
 		
-		player = new Player(tileMap);
-		player.setPosition(100, 100);
+		player = new JazzPlayer(tileMap);
+		player.setPosition(60, 320);
 		
 		populateEnemies();
 		
@@ -54,7 +55,7 @@ public class Level1State extends GameState {
 		//backgroundMusic = new AudioPlayer("/Music/levelsong.mp3");
 		//backgroundMusic.play();
 		backgroundMusic = new AudioPlayer("/Music/theme.mp3");
-		backgroundMusic.play();
+		//backgroundMusic.play();
 	}
 	
 	
@@ -62,18 +63,23 @@ public class Level1State extends GameState {
 		enemies = new ArrayList<Enemy>();
 		
 		//Slugger s;
-		Guard s;
+		Archer s;
 		
-		Point[] points = {
+		/*Point[] points = {
 				new Point(200, 100),
 				new Point(860, 200),
 				new Point(1525, 200),
 				new Point(1680, 200),
 				new Point(1800, 200)
+		};*/
+		Point[] points = {
+				new Point(200, 350),
+				new Point(350, 350),
+				new Point(475, 350)
 		};
 		
 		for(int i = 0; i < points.length; i++) {
-			s = new Guard(tileMap);
+			s = new Archer(tileMap);
 			s.setPosition(points[i].x, points[i].y);
 			enemies.add(s);
 		}
@@ -155,7 +161,7 @@ public class Level1State extends GameState {
 		if(k == KeyEvent.VK_DOWN) {player.setDown(true);}
 		if(k == KeyEvent.VK_SPACE) { player.setJumping(true);}
 		if(k == KeyEvent.VK_E) {player.setGliding(true);}
-		if(k == KeyEvent.VK_R) {player.setScratching();}
+		//if(k == KeyEvent.VK_R) {player.setScratching();}
 		if(k == KeyEvent.VK_F) {player.setFiring();}
 		if(k == KeyEvent.VK_ESCAPE) {System.exit(0);}
 	}
