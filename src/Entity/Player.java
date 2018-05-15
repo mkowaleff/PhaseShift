@@ -17,7 +17,7 @@ public class Player extends MapObject {
 	private int maxHealth;
 	private int fire; // attack variables
 	private int maxFire;
-	private boolean dead;
+	private boolean isDead;
 	private boolean flinching;
 	private long flinchTimer; // flinching time
 	
@@ -83,6 +83,8 @@ public class Player extends MapObject {
 		scratchDamage = 8;
 		scratchRange = 40;
 		
+		isDead = false;
+		
 		// load sprites
 		try {
 			
@@ -126,6 +128,14 @@ public class Player extends MapObject {
 		
 	}
 	
+	
+	public boolean isDead() {
+		return isDead;
+	}
+	
+	public void setDead() {
+		isDead = true;
+	}
 	
 	public int getHealth() {
 		return health;
@@ -224,7 +234,7 @@ public class Player extends MapObject {
 		if(flinching) return;
 		health -= damage;
 		if(health < 0) health = 0;
-		if(health == 0) dead = true;
+		if(health == 0) isDead = true;
 		flinching = true;
 		flinchTimer = System.nanoTime();
 	}

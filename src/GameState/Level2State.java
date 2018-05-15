@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.awt.Point;
 
 
-public class Level1State extends GameState {
+public class Level2State extends GameState {
 	
 	private TileMap tileMap;
 	private Background bg;
@@ -25,7 +25,7 @@ public class Level1State extends GameState {
 	
 	private AudioPlayer backgroundMusic;
 	
-	public Level1State(GameStateManager gsm) { 
+	public Level2State(GameStateManager gsm) { 
 		this.gsm = gsm;
 		init();
 	}
@@ -35,7 +35,7 @@ public class Level1State extends GameState {
 		tileMap = new TileMap(30);
 		//tileMap.loadTiles("/Tilesets/grasstileset.gif");
 		tileMap.loadTiles("/Tilesets/moonTileSet.gif");
-		tileMap.loadMap("/Maps/level1-1.map");
+		tileMap.loadMap("/Maps/level2.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
@@ -111,11 +111,6 @@ public class Level1State extends GameState {
 				i--;
 			}
 		}
-		
-		// Switch to game over screen
-		if(player.isDead()) {
-			gsm.setState(4);
-		}
 	}
 	
 	public void draw(Graphics2D g) {
@@ -137,7 +132,7 @@ public class Level1State extends GameState {
 		// draw enemies
 		for(int i = 0; i < enemies.size(); i ++) {
 			enemies.get(i).draw(g);
-		} 
+		}
 		
 		// draw explosions
 		for(int i = 0; i < explosions.size(); i++) {

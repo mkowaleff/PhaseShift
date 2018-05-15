@@ -26,11 +26,10 @@ public class MenuState extends GameState {
 		
 		try {
 			//bg = new Background("/Backgrounds/aieye.jpg", 1);
-			bg = new Background("/Backgrounds/menubg2.gif", 1);
+			bg = new Background("/Backgrounds/menubg.gif", 1);
 			bg.setVector(-0.1,  0); // moving 0.1 pixels to the left
 			
 			titleColor = new Color(128, 0, 128);
-			titleColor = Color.BLUE;
 			titleFont = new Font("Phosphate", Font.BOLD, 28);
 			
 			creditsColor = Color.RED;
@@ -68,7 +67,7 @@ public class MenuState extends GameState {
 		g.setFont(font);
 		for(int i = 0; i < options.length; i++) {
 			if(i == currentChoice) {
-				g.setColor(Color.green);
+				g.setColor(Color.red);
 			}
 			else {
 				g.setColor(Color.gray);
