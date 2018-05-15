@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 public class MenuState extends GameState {
 	
 	private Background bg;
+	private Background bg2;
 	
 	private int currentChoice = 0;
 	private String[] options = {"New Game", "Tutorial", "Help", "Exit"};
@@ -27,7 +28,12 @@ public class MenuState extends GameState {
 		try {
 			//bg = new Background("/Backgrounds/aieye.jpg", 1);
 			bg = new Background("/Backgrounds/menubg.gif", 1);
-			bg.setVector(-0.1,  0); // moving 0.1 pixels to the left
+			bg.setPosition(0, 0);
+			bg.setVector(-0.5,  0); // moving 0.1 pixels to the left
+			
+			bg2 = new Background("/Backgrounds/menubg.gif", 1);
+			bg2.setPosition(bg2.getWidth(), 0);
+			bg2.setVector(-1, 0);
 			
 			titleColor = new Color(128, 0, 128);
 			titleFont = new Font("Phosphate", Font.BOLD, 28);
@@ -47,12 +53,21 @@ public class MenuState extends GameState {
 	
 	public void update() {
 		bg.update();
+		bg2.update();
+		
+		if(bg.getX() <= -bg.getWidth()) {
+			bg.setPosition(bg.getWidth(), 0);
+		}
+		if(bg2.getX() <= - bg2.getWidth()) {
+			bg2.setPosition(bg2.getWidth(), 0);
+		}
 	}
 	
 	public void draw(Graphics2D g) {
 		
 		//draw background
 		bg.draw(g);
+		bg2.draw(g);
 		
 		// draw title
 		g.setColor(titleColor);

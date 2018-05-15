@@ -11,6 +11,7 @@ import TileMap.Background;
 public class GameOverState extends GameState {
 
 	private Background bg;
+	private Background bg2;
 
 	private int currentChoice = 0;
 	private String[] options = {"Retry", "Return to Menu", "Exit to Desktop"};
@@ -29,7 +30,12 @@ public class GameOverState extends GameState {
 		try {
 
 			bg = new Background("/Backgrounds/menubg.gif", 1);
-			bg.setVector(-0.1, 0);
+			bg.setPosition(0, 0);
+			bg.setVector(-0.5,  0); // moving 0.1 pixels to the left
+			
+			bg2 = new Background("/Backgrounds/menubg.gif", 1);
+			bg2.setPosition(bg2.getWidth(), 0);
+			bg2.setVector(-0.5, 0);
 			
 			gameOverColor 	= new Color(128, 0, 128);
 			gameOverFont 	= new Font("Phosphate", Font.BOLD, 28);
@@ -45,23 +51,26 @@ public class GameOverState extends GameState {
 		}
 	}
 	
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
+	public void init() {}
+
 	public void update() {
-		// TODO Auto-generated method stub
 		bg.update();
+		bg2.update();
+		
+		if(bg.getX() <= -bg.getWidth()) {
+			bg.setPosition(bg.getWidth(), 0);
+		}
+		if(bg2.getX() <= -bg2.getWidth()) {
+			bg2.setPosition(bg2.getWidth(), 0);
+		}
 	}
 
-	@Override
+
 	public void draw(Graphics2D g) {
-		// TODO Auto-generated method stub
 		// draw bg
 		bg.draw(g);
+		bg2.draw(g);
 
 		// draw title
 		g.setFont(gameOverFont);
