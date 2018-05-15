@@ -29,8 +29,8 @@ public class TileMap {
 	private int tileSize;
 	private int numRows;
 	private int numCols;
-	private int width; // in pixels
-	private int height; // in pixels
+	private int width; // dimensions of map in pixels
+	private int height; // dimensions of map in pixels
 	
 	// Tileset
 	private BufferedImage tileset;
@@ -74,6 +74,11 @@ public class TileMap {
 	
 	public void loadMap(String s) {
 		// loads map into memory
+		
+		
+		// First line is number of columns
+		// Second line is number of rows
+		// The rest of the lines are the map itself
 		
 		try {
 			InputStream in = getClass().getResourceAsStream(s);
