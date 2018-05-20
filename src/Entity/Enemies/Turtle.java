@@ -9,11 +9,11 @@ import javax.imageio.ImageIO;
 
 // basic enemy that moves between walls
 
-public class Archer extends Enemy {
+public class Turtle extends Enemy {
 	
 	private BufferedImage[] sprites;
 	
-	public Archer(TileMap tm) {
+	public Turtle(TileMap tm) {
 		super(tm);
 		
 		moveSpeed = 0.7;

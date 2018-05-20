@@ -7,12 +7,14 @@ public class GameStateManager {
 	private GameState[] gameStates;
 	private int currentState; // the current state is going to be the index of the game state list
 	
-	public static final int NUMBEROFGAMESTATES = 5;
+	public static final int NUMBEROFGAMESTATES = 6;
+	
 	public static final int MENUSTATE = 0;
 	public static final int LEVEL1STATE = 1;
 	public static final int TUTORIALSTATE = 2;
 	public static final int HELPSTATE = 3;
 	public static final int GAMEOVERSTATE = 4;
+	public static final int PREFERENCESSTATE = 5;
 	
 	public GameStateManager() {
 		gameStates = new GameState[NUMBEROFGAMESTATES];
@@ -38,6 +40,9 @@ public class GameStateManager {
 		}
 		if(state == GAMEOVERSTATE) {
 			gameStates[state] = new GameOverState(this);
+		}
+		if(state == PREFERENCESSTATE) {
+			gameStates[state] = new PreferencesState(this);
 		}
 	}
 	

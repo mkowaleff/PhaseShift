@@ -108,7 +108,8 @@ public class JazzPlayer extends MapObject {
 		
 		sfx = new HashMap<String, AudioPlayer>();
 		sfx.put("jump", new AudioPlayer("/SFX/jump.mp3"));
-		sfx.put("fireball", new AudioPlayer("/SFX/fireball.mp3"));
+		//sfx.put("fireball", new AudioPlayer("/SFX/fireball.mp3"));
+		sfx.put("fireball", new AudioPlayer("/SFX/laser.mp3"));
 		
 		
 	}

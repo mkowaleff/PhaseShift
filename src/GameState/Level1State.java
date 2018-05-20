@@ -20,7 +20,7 @@ public class Level1State extends GameState {
 	
 	private JazzPlayer player;
 	
-	private ArrayList<Enemy> enemies; 
+	private ArrayList<Enemy> enemies;
 	private ArrayList<Explosion> explosions;
 	
 	private AudioPlayer backgroundMusic;
@@ -35,10 +35,11 @@ public class Level1State extends GameState {
 		tileMap = new TileMap(30);
 		tileMap.loadTiles("/Tilesets/grasstileset.gif");
 		//tileMap.loadTiles("/Tilesets/moonTileSet.gif");
-		//tileMap.loadMap("/Maps/level1-1.map");
-		tileMap.loadMap("/Maps/testBox.map");
+		tileMap.loadMap("/Maps/CollisionTestLevel1.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
+		
+		
 		
 		bg = new Background("/Backgrounds/grassbg1.gif",0.1);
 		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
@@ -63,25 +64,21 @@ public class Level1State extends GameState {
 		enemies = new ArrayList<Enemy>();
 		
 		//Slugger s;
-		Archer s;
+		Archer archer;
 		
-		/*Point[] points = {
-				new Point(200, 100),
-				new Point(860, 200),
-				new Point(1525, 200),
-				new Point(1680, 200),
-				new Point(1800, 200)
-		};*/
-		Point[] points = {
-				new Point(200, 350),
-				new Point(350, 350),
-				new Point(475, 350)
+		Point[] enemyLocations = {
+				new Point(300, 320),
+				new Point(480, 320),
+				new Point(660, 320),
+				new Point(840, 320),
+				new Point(1020, 320),
+				new Point(1200, 320)
 		};
 		
-		for(int i = 0; i < points.length; i++) {
-			s = new Archer(tileMap);
-			s.setPosition(points[i].x, points[i].y);
-			enemies.add(s);
+		for(int i = 0; i < enemyLocations.length; i++) {
+			archer = new Archer(tileMap);
+			archer.setPosition(enemyLocations[i].x, enemyLocations[i].y);
+			enemies.add(archer);
 		}
 	}
 	
