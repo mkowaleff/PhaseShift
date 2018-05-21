@@ -1,48 +1,63 @@
 package GameState;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameStateManager {
 	
 	private GameState[] gameStates;
 	private int currentState; // the current state is going to be the index of the game state list
 	
-	public static final int NUMBEROFGAMESTATES = 6;
+	//public static final int NUMBEROFGAMESTATES = 6;
 	
-	public static final int MENUSTATE = 0;
-	public static final int LEVEL1STATE = 1;
-	public static final int TUTORIALSTATE = 2;
-	public static final int HELPSTATE = 3;
-	public static final int GAMEOVERSTATE = 4;
-	public static final int PREFERENCESSTATE = 5;
+	public static HashMap<String, Integer> states;
+	public static final String[] stateNames = {
+			"MENUSTATE",
+			"LEVEL1STATE",
+			"TUTORIALSTATE",
+			"HELPSTATE",
+			"GAMEOVERSTATE",
+			"PREFERENCESSTATE",
+			"LEVELSELECTIONSTATE"
+	};
+	
 	
 	public GameStateManager() {
-		gameStates = new GameState[NUMBEROFGAMESTATES];
+		states = new HashMap<String, Integer>();
 		
-		currentState = MENUSTATE;
+		for(int i = 0; i < stateNames.length; i++ ) {
+			states.put(stateNames[i], i);
+		}
+		
+		gameStates = new GameState[states.size()];
+		
+		currentState = states.get("MENUSTATE");
 		loadState(currentState);
 		
 	}
 	
 	public void loadState(int state) {
 		// have to add condition for each existing state
-		if(state == MENUSTATE) {
+		if(state == states.get("MENUSTATE")) {
 			gameStates[state] = new MenuState(this);
 		}
-		if(state == LEVEL1STATE) {
+		if(state == states.get("LEVEL1STATE")) {
 			gameStates[state] = new Level1State(this);
 		}
-		if(state == TUTORIALSTATE) {
+		if(state == states.get("TUTORIALSTATE")) {
 			gameStates[state] = new TutorialState(this);
 		}
-		if(state == HELPSTATE) {
+		if(state == states.get("HELPSTATE")) {
 			gameStates[state] = new HelpState(this);
 		}
-		if(state == GAMEOVERSTATE) {
+		if(state == states.get("GAMEOVERSTATE")) {
 			gameStates[state] = new GameOverState(this);
 		}
-		if(state == PREFERENCESSTATE) {
+		if(state == states.get("PREFERENCESSTATE")) {
 			gameStates[state] = new PreferencesState(this);
+		}
+		if(state == states.get("LEVELSELECTIONSTATE")) {
+			gameStates[state] = new LevelSelectionState(this);
 		}
 	}
 	

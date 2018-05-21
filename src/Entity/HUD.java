@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 
 public class HUD {
 	
-	private JazzPlayer player;
+	private ElfPlayer player;
 	private BufferedImage image;
 	private Font font;
 	
@@ -22,7 +22,7 @@ public class HUD {
 		}
 	}
 	
-	public HUD(JazzPlayer p) {
+	public HUD(ElfPlayer p) {
 		player = p;
 		
 		try {
@@ -39,7 +39,7 @@ public class HUD {
 		g.setFont(font);
 		g.setColor(Color.white);
 		g.drawString(player.getHealth() + "/" + player.getMaxHealth(), 30, 25);
-		g.drawString(player.getFire()/100 + "/" + player.getMaxFire()/100, 30, 45);
+		g.drawString(player.getStamina()/100 + "/" + player.getMaxStamina()/100, 30, 45);
 	}
 
 }

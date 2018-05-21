@@ -9,6 +9,9 @@ import Audio.AudioPlayer;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import java.awt.Point;
 
 
@@ -18,7 +21,7 @@ public class Level1State extends GameState {
 	private Background bg;
 	private HUD hud;
 	
-	private JazzPlayer player;
+	private ElfPlayer player;
 	
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Explosion> explosions;
@@ -41,11 +44,11 @@ public class Level1State extends GameState {
 		
 		
 		
-		bg = new Background("/Backgrounds/grassbg1.gif",0.1);
+		bg = new Background("/Backgrounds/grassbg1.png",0.1);
 		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
 		
-		player = new JazzPlayer(tileMap);
-		player.setPosition(60, 320);
+		player = new ElfPlayer(tileMap);
+		player.setPosition(90, 350);
 		
 		populateEnemies();
 		
@@ -65,6 +68,7 @@ public class Level1State extends GameState {
 		
 		//Slugger s;
 		Archer archer;
+		Boar boar;
 		
 		Point[] enemyLocations = {
 				new Point(300, 320),
@@ -76,9 +80,9 @@ public class Level1State extends GameState {
 		};
 		
 		for(int i = 0; i < enemyLocations.length; i++) {
-			archer = new Archer(tileMap);
-			archer.setPosition(enemyLocations[i].x, enemyLocations[i].y);
-			enemies.add(archer);
+			boar = new Boar(tileMap);
+			boar.setPosition(enemyLocations[i].x, enemyLocations[i].y);
+			enemies.add(boar);
 		}
 	}
 	
@@ -157,10 +161,23 @@ public class Level1State extends GameState {
 		if(k == KeyEvent.VK_UP) {	player.setUp(true);}
 		if(k == KeyEvent.VK_DOWN) {player.setDown(true);}
 		if(k == KeyEvent.VK_SPACE) { player.setJumping(true);}
-		if(k == KeyEvent.VK_E) {player.setGliding(true);}
+		if(k == KeyEvent.VK_E) {player.setAttackingMelee();}
 		//if(k == KeyEvent.VK_R) {player.setScratching();}
-		if(k == KeyEvent.VK_F) {player.setFiring();}
-		if(k == KeyEvent.VK_ESCAPE) {System.exit(0);}
+		if(k == KeyEvent.VK_F) {player.setShooting();}
+		if(k == KeyEvent.VK_ESCAPE) {
+			int in = JOptionPane.showOptionDialog(null, "Are you sure you want to exit the game?", "Exit Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 0);
+			if(in == 0) {
+				System.exit(0);
+			}
+		}
+		if(k == KeyEvent.VK_I) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
 	}
 	public void keyReleased(int k) {
 		if(k == KeyEvent.VK_LEFT) {player.setLeft(false);}
@@ -168,6 +185,5 @@ public class Level1State extends GameState {
 		if(k == KeyEvent.VK_UP) {player.setUp(false);}
 		if(k == KeyEvent.VK_DOWN) {player.setDown(false);}
 		if(k == KeyEvent.VK_SPACE) {player.setJumping(false);}
-		if(k == KeyEvent.VK_E) {player.setGliding(false);}
 	}
 }

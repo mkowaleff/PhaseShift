@@ -5,30 +5,32 @@ import TileMap.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import Audio.AudioPlayer;
-
+import java.util.Random;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class JazzPlayer extends MapObject {
+public class ElfPlayer extends MapObject {
 	
-	// player stuff
+	// Player stuff
 	private int health;
 	private int maxHealth;
-	private int fire; // attack variables
-	private int maxFire;
+	private int stamina; // attack variables
+	private int maxStamina;
 	private boolean isDead;
 	private boolean flinching;
 	private long flinchTimer; // flinching time
 	
-	// fireball
-	private boolean firing;
-	private int fireCost;
-	private int fireBallDamage;
-	private ArrayList<FireBall> fireBalls;
+	// Arrow
+	private boolean isShooting;
+	private int costToShoot;
+	private int rangedDamage;
+	private ArrayList<Arrow> arrows;
 	
-	// gliding
-	private boolean gliding;
+	// Melee
+	private boolean isAttackingMelee;
+	private int meleeDamage;
+	private int meleeRange;
 	
 	
 	// can add more if we need the player to do more stuff
@@ -37,25 +39,26 @@ public class JazzPlayer extends MapObject {
 	// animations
 	private ArrayList<BufferedImage[]> sprites;
 	// # of frames for each action
-	private final int[] numFrames = {27, 8, 6, 6, 8, 6};
+	private final int[] numFrames = {7, 10, 10, 6, 6, 5};
 	
 	// animation actions
 	private static final int IDLE = 0;
 	private static final int WALKING = 1;
-	private static final int JUMPING = 2;
-	private static final int FALLING = 3;
-	private static final int GLIDING = 4;
-	private static final int FIREBALL = 5;
+	private static final int SHOOTING = 2;
+	private static final int MELEE = 3;
+	private static final int DYING = 4;
+	private static final int JUMPING = IDLE;
+	private static final int FALLING = IDLE;
 	
 	private HashMap<String, AudioPlayer> sfx;
 	
-	public JazzPlayer(TileMap tm) {
+	public ElfPlayer(TileMap tm) {
 		super(tm);
 		
-		width = 70;
-		height = 70;
+		width = 80;
+		height = 80;
 		collisionWidth = 20;
-		collisionHeight = 20;
+		collisionHeight = 59;
 		
 		moveSpeed = 0.3;
 		maxSpeed = 1.6;
@@ -68,24 +71,34 @@ public class JazzPlayer extends MapObject {
 		facingRight = true;
 		
 		health = maxHealth = 5;
-		fire = maxFire = 2500;
+		stamina = maxStamina = 2500;
 		
-		fireCost = 200;
-		fireBallDamage = 5;
-		fireBalls = new ArrayList<FireBall>();
+		costToShoot = 200;
+		rangedDamage = 5;
+		arrows = new ArrayList<Arrow>();
+		
+		meleeDamage = 8;
+		meleeRange = 40;
 		
 		isDead = false;
 		
 		// load sprites
 		try {
 			
-			//BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/playersprites.gif"));
-			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/JazzPlayerSpritesheet-better.png"));
+			
+			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/grandelf.png"));
+			/* Row:
+			 * 1. Idle
+			 * 2. Walking
+			 * 3. Shooting
+			 * 4. Melee
+			 * 5. Dying
+			 */
 			
 			sprites = new ArrayList<BufferedImage[]>();
 			
 			
-			for(int i = 0; i < 6; i++) { // 7 is the number of actions
+			for(int i = 0; i < 4; i++) { // 5 is the number of actions
 				BufferedImage[] bi = new BufferedImage[numFrames[i]];
 				
 				for(int j = 0; j < numFrames[i]; j++) {
@@ -108,9 +121,12 @@ public class JazzPlayer extends MapObject {
 		
 		sfx = new HashMap<String, AudioPlayer>();
 		sfx.put("jump", new AudioPlayer("/SFX/jump.mp3"));
-		//sfx.put("fireball", new AudioPlayer("/SFX/fireball.mp3"));
-		sfx.put("fireball", new AudioPlayer("/SFX/laser.wav"));
-		sfx.put("gliding", new AudioPlayer("/SFX/helicopter.mp3"));
+		sfx.put("arrow1", new AudioPlayer("/SFX/arrow1.mp3"));
+		sfx.put("arrow2", new AudioPlayer("/SFX/arrow2.mp3"));
+		sfx.put("arrow3", new AudioPlayer("/SFX/arrow3.mp3"));
+		sfx.put("knife1", new AudioPlayer("/SFX/knife1.mp3"));
+		sfx.put("knife2", new AudioPlayer("/SFX/knife2.mp3"));
+		sfx.put("knife3", new AudioPlayer("/SFX/knife3.mp3"));
 		
 		
 	}
@@ -132,20 +148,20 @@ public class JazzPlayer extends MapObject {
 		return maxHealth;
 	}
 	
-	public int getFire() {
-		return fire;
+	public int getStamina() {
+		return stamina;
 	}
 	
-	public int getMaxFire() {
-		return maxFire;
+	public int getMaxStamina() {
+		return maxStamina;
 	}
 	
-	public void setFiring() {
-		firing = true;
+	public void setShooting() {
+		isShooting = true;
 	}
 	
-	public void setGliding(boolean b) {
-		gliding = b;
+	public void setAttackingMelee() {
+		isAttackingMelee = true;
 	}
 	
 	
@@ -155,12 +171,26 @@ public class JazzPlayer extends MapObject {
 		for(int i = 0; i < enemies.size(); i++) {
 			Enemy e = enemies.get(i); 
 			
+			// check scratch attack
+						if(isAttackingMelee) {
+							if(facingRight) {
+								if(( e.getX() > x ) && (e.getX() < x + meleeRange) && (e.getY() > y - height / 2) && (e.getY() < y + height/2) ) {
+									e.hit(meleeDamage);
+								}
+							}
+							else {
+								if( (e.getX() < x) && (e.getX() > x - meleeRange) && (e.getY() > y - height / 2) && (e.getY() < y + height / 2) ) {
+									e.hit(meleeDamage);
+								}
+							}
+						}
 			
-			// check fireball attack
-			for(int j = 0; j < fireBalls.size(); j++) {
-				if(fireBalls.get(j).intersects(e)) {
-					e.hit(fireBallDamage);
-					fireBalls.get(j).setHit();
+			
+			// check ranged attack
+			for(int j = 0; j < arrows.size(); j++) {
+				if(arrows.get(j).intersects(e)) {
+					e.hit(rangedDamage);
+					arrows.get(j).setHit();
 					break;
 				}
 			}
@@ -216,7 +246,7 @@ public class JazzPlayer extends MapObject {
 		}
 		
 		// player cannot attack while moving, except in air
-		if((currentAction == FIREBALL) && !(jumping || falling)) {
+		if((currentAction == SHOOTING) && !(jumping || falling)) {
 			dx = 0; // cannot move
 			
 		}
@@ -230,17 +260,11 @@ public class JazzPlayer extends MapObject {
 		
 		// falling
 		if(falling) {
-			
-			if(dy > 0 && gliding) dy += fallSpeed * 0.1;
-			else dy += fallSpeed;
+			dy += fallSpeed;
 			
 			if(dy > 0) jumping = false;
 			if(dy < 0 && !jumping) dy += stopJumpSpeed; // the longer you hold jump button, the higher you jump
 			if(dy > maxFallSpeed) dy = maxFallSpeed;
-		}
-		
-		if(gliding) {
-			//sfx.get("gliding").play();
 		}
 	}
 	
@@ -252,29 +276,32 @@ public class JazzPlayer extends MapObject {
 		setPosition(xtemp, ytemp);
 		
 		// check if attack has stopped
-		if(currentAction == FIREBALL) {
-			if(animation.hasPlayedOnce()) firing = false; 
+		if(currentAction == SHOOTING) {
+			if(animation.hasPlayedOnce()) isShooting = false; 
+		}
+		if(currentAction == MELEE) {
+			if(animation.hasPlayedOnce()) isAttackingMelee = false;
 		}
 		
 		
-		// fireball attack
-		fire += 1;
-		if(fire > maxFire) fire = maxFire;
-		if(firing && currentAction != FIREBALL) {
-			if(fire > fireCost) { // if we have enough energy to perform the fireBall
-				fire -= fireCost;
-				FireBall fb = new FireBall(tileMap, facingRight);
+		// ranged attack
+		stamina += 1;
+		if(stamina > maxStamina) stamina = maxStamina;
+		if(isShooting && currentAction != SHOOTING) {
+			if(stamina > costToShoot) { // if we have enough energy to perform the fireBall
+				stamina -= costToShoot;
+				Arrow fb = new Arrow(tileMap, facingRight);
 				fb.setPosition(x, y);
-				fireBalls.add(fb);
+				arrows.add(fb);
 				
 			}
 		}
 		
-		// update fireballs
-		for(int i = 0; i < fireBalls.size(); i++) {
-			fireBalls.get(i).update();
-			if(fireBalls.get(i).shouldRemove()) {
-				fireBalls.remove(i);
+		// update arrows
+		for(int i = 0; i < arrows.size(); i++) {
+			arrows.get(i).update();
+			if(arrows.get(i).shouldRemove()) {
+				arrows.remove(i);
 				i--;
 			}
 		}
@@ -287,38 +314,39 @@ public class JazzPlayer extends MapObject {
 			}
 		}
 		
-		// set animation
-		else if(firing) {
-			if(currentAction != FIREBALL) {
-				sfx.get("fireball").play();
-				currentAction = FIREBALL;
-				animation.setFrames(sprites.get(FIREBALL));
-				animation.setDelay(100);
-				width = 70;
+		// Set Animation
+		else if(isShooting) {
+			if(currentAction != SHOOTING) {
+				playShootingSound();
+				currentAction = SHOOTING;
+				animation.setFrames(sprites.get(SHOOTING));
+				animation.setDelay(35);
+				width = 80;
 			}
 		}
-		else if(dy > 0) {
-			if(gliding) {
-				if(currentAction != GLIDING) {
-					currentAction = GLIDING;
-					animation.setFrames(sprites.get(GLIDING));
-					animation.setDelay(100);
-					width = 70;
-				}
+		else if(isAttackingMelee) {
+			if(currentAction != MELEE) {
+				playMeleeSound();
+				currentAction = MELEE;
+				animation.setFrames(sprites.get(MELEE));
+				animation.setDelay(100);
+				width = 80;
 			}
-			else if (currentAction != FALLING) {
+		}
+		/*else if(dy > 0) {
+			if (currentAction != FALLING) {
 				currentAction = FALLING;
 				animation.setFrames(sprites.get(FALLING));
 				animation.setDelay(100);
-				width = 70;
+				width = 80;
 			}
-		}
+		}*/
 		else if(dy < 0) {
 			if(currentAction != JUMPING) {
 				currentAction = JUMPING;
 				 animation.setFrames(sprites.get(JUMPING));
 				 animation.setDelay(-1);
-				 width = 70;
+				 width = 80;
 			}
 		}
 		else if(left || right) {
@@ -326,7 +354,7 @@ public class JazzPlayer extends MapObject {
 				currentAction = WALKING;
 				animation.setFrames(sprites.get(WALKING));
 				animation.setDelay(40);
-				width = 70;
+				width = 80;
 			}
 		}
 		else {
@@ -334,26 +362,41 @@ public class JazzPlayer extends MapObject {
 				currentAction = IDLE;
 				animation.setFrames(sprites.get(IDLE));
 				animation.setDelay(400);
-				width = 70;
+				width = 80;
 			}
 		}
 		
 		animation.update();
 		
 		// set the direction player is facing
-		if (currentAction != FIREBALL) {
+		if (currentAction != SHOOTING) {
 			if(right) facingRight = true;
 			if(left) facingRight = false;
 		}
 	}
 	
 	
+	private void playMeleeSound() {
+		Random rand = new Random();
+		int n = rand.nextInt(3) + 1;
+		sfx.get("knife" + n).play();
+		
+	}
+
+
+	private void playShootingSound() {
+		Random rand = new Random();
+		int n = rand.nextInt(3) + 1;
+		sfx.get("arrow" + n).play();
+	}
+
+
 	public void draw(Graphics2D g) {
 		setMapPosition();
 		
-		// draw fireballs
-		for (int i = 0; i < fireBalls.size(); i++) {
-			fireBalls.get(i).draw(g);
+		// draw projectiles
+		for (int i = 0; i < arrows.size(); i++) {
+			arrows.get(i).draw(g);
 		}
 		
 		// draw player

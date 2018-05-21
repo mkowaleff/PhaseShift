@@ -170,7 +170,11 @@ public class TileMap {
 				int r = rc/ numTilesAcross;
 				int c = rc % numTilesAcross;
 				
-				g.drawImage(tiles[r][c].getImage(), (int)x + col * tileSize, (int) y + row * tileSize, null);
+				int tempX = (int)x + col * tileSize;
+				int tempY = (int)y + row * tileSize;
+				
+				g.drawImage(tiles[r][c].getImage(), tempX, tempY, null);
+				g.drawRect(tempX, tempY, tileSize, tileSize);
 			}
 		}
 	}

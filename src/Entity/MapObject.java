@@ -2,6 +2,7 @@ package Entity;
 
 import TileMap.*;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
@@ -242,12 +243,24 @@ public abstract class MapObject {
 	}
 	
 	public void draw(Graphics2D g) {
+		
+		int tempX = (int)(x + xmap - width /2);
+		int tempY = (int)(y + ymap - height /2);
+		
+		int outBoxWidth = animation.getImage().getWidth();
+		int outBoxHeight = animation.getImage().getHeight();
+		
 		if(facingRight) {
-			g.drawImage(animation.getImage(), (int)(x + xmap - width /2), (int)(y + ymap - height /2), null);
+			g.drawImage(animation.getImage(), tempX, tempY, null);
 		}
 		else {
-			g.drawImage(animation.getImage(),(int)(x + xmap - width /2 + width), (int)(y + ymap - height /2), -width, height, null);
+			g.drawImage(animation.getImage(),(tempX + width), tempY, -width, height, null);
 		}
+		g.setColor(Color.green);
+		g.drawRect(tempX, tempY, outBoxWidth, outBoxHeight);
+		
+		g.setColor(Color.red);
+		g.drawRect(tempX + outBoxWidth/2 - collisionWidth/2, tempY + outBoxHeight/2 - collisionHeight/2, collisionWidth, collisionHeight);
 	}
 	
 }
