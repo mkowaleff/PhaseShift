@@ -39,7 +39,7 @@ public class ElfPlayer extends MapObject {
 	// animations
 	private ArrayList<BufferedImage[]> sprites;
 	// # of frames for each action
-	private final int[] numFrames = {7, 10, 10, 6, 6, 5};
+	private final int[] numFrames = {7, 10, 10, 10, 6, 1};
 	
 	// animation actions
 	private static final int IDLE = 0;
@@ -65,12 +65,12 @@ public class ElfPlayer extends MapObject {
 		stopSpeed = 0.4;
 		fallSpeed = 0.15;
 		maxFallSpeed = 4.0;
-		jumpStart = -4.8;
+		jumpStart = -6;
 		stopJumpSpeed = 0.3;
 		
 		facingRight = true;
 		
-		health = maxHealth = 5;
+		health = maxHealth = 10;
 		stamina = maxStamina = 2500;
 		
 		costToShoot = 200;
@@ -127,42 +127,29 @@ public class ElfPlayer extends MapObject {
 		sfx.put("knife1", new AudioPlayer("/SFX/knife1.mp3"));
 		sfx.put("knife2", new AudioPlayer("/SFX/knife2.mp3"));
 		sfx.put("knife3", new AudioPlayer("/SFX/knife3.mp3"));
+		sfx.put("playerWound1", new AudioPlayer("/SFX/playerWound1.wav"));
+		sfx.put("playerWound2", new AudioPlayer("/SFX/playerWound2.wav"));
+		sfx.put("playerWound3", new AudioPlayer("/SFX/playerWound3.wav"));
 		
 		
 	}
 	
 	
-	public boolean isDead() {
-		return isDead;
-	}
+	public boolean isDead() { return isDead; }
 	
-	public void setDead() {
-		isDead = true;
-	}
+	public void setDead() { isDead = true; }
 	
-	public int getHealth() {
-		return health;
-	}
+	public int getHealth() { return health; }
 	
-	public int getMaxHealth() {
-		return maxHealth;
-	}
+	public int getMaxHealth() { return maxHealth; }
 	
-	public int getStamina() {
-		return stamina;
-	}
+	public int getStamina() { return stamina; }
 	
-	public int getMaxStamina() {
-		return maxStamina;
-	}
+	public int getMaxStamina() { return maxStamina; }
 	
-	public void setShooting() {
-		isShooting = true;
-	}
+	public void setShooting() { isShooting = true; }
 	
-	public void setAttackingMelee() {
-		isAttackingMelee = true;
-	}
+	public void setAttackingMelee() { isAttackingMelee = true; }
 	
 	
 	public void checkAttack(ArrayList<Enemy> enemies) {
@@ -207,6 +194,7 @@ public class ElfPlayer extends MapObject {
 	public void hit(int damage) {
 		if(flinching) return;
 		health -= damage;
+		playWoundSound();
 		if(health < 0) health = 0;
 		if(health == 0) isDead = true;
 		flinching = true;
@@ -291,6 +279,7 @@ public class ElfPlayer extends MapObject {
 			if(stamina > costToShoot) { // if we have enough energy to perform the fireBall
 				stamina -= costToShoot;
 				Arrow fb = new Arrow(tileMap, facingRight);
+				fb.facingRight = facingRight;
 				fb.setPosition(x, y);
 				arrows.add(fb);
 				
@@ -320,27 +309,27 @@ public class ElfPlayer extends MapObject {
 				playShootingSound();
 				currentAction = SHOOTING;
 				animation.setFrames(sprites.get(SHOOTING));
-				animation.setDelay(35);
+				animation.setDelay(50);
 				width = 80;
 			}
 		}
 		else if(isAttackingMelee) {
 			if(currentAction != MELEE) {
-				playMeleeSound();
 				currentAction = MELEE;
 				animation.setFrames(sprites.get(MELEE));
 				animation.setDelay(100);
+				playMeleeSound();
 				width = 80;
 			}
 		}
-		/*else if(dy > 0) {
+		else if(dy > 0) {
 			if (currentAction != FALLING) {
 				currentAction = FALLING;
 				animation.setFrames(sprites.get(FALLING));
 				animation.setDelay(100);
 				width = 80;
 			}
-		}*/
+		}
 		else if(dy < 0) {
 			if(currentAction != JUMPING) {
 				currentAction = JUMPING;
@@ -389,10 +378,20 @@ public class ElfPlayer extends MapObject {
 		int n = rand.nextInt(3) + 1;
 		sfx.get("arrow" + n).play();
 	}
+	
+	private void playWoundSound() {
+		Random rand = new Random();
+		int n = rand.nextInt(3) + 1;
+		sfx.get("playerWound" + n).play();
+		
+	}
 
 
 	public void draw(Graphics2D g) {
 		setMapPosition();
+		
+		drawHealthBar(g);
+		drawStaminaBar(g);
 		
 		// draw projectiles
 		for (int i = 0; i < arrows.size(); i++) {
@@ -408,6 +407,101 @@ public class ElfPlayer extends MapObject {
 		}
 		
 		super.draw(g);
+	}
+	
+	public void drawHealthBar(Graphics2D g) {
+		Color primaryColor;
+		Color secondaryColor;
+		
+		int healthBarWidth = 80;
+		int HealthBarHeight = 5;
+		
+		int healthBarX = getTempX() + 1;
+		int healthBarY = getTempY() - 30;
+		
+		double healthRemaining = (double)health/maxHealth;
+		double drawWidth = healthRemaining * healthBarWidth;
+		
+		//System.out.println("Health " + health + " / " + maxHealth);
+		//System.out.println("Fraction: " + healthRemaining);
+		//System.out.println();
+		g.setColor(Color.black);
+		g.fillRect(healthBarX + 2, healthBarY + 2, healthBarWidth, HealthBarHeight + 2);
+		g.setColor(Color.darkGray);
+		g.fillRect(healthBarX - 1, healthBarY - 1, healthBarWidth + 2, HealthBarHeight + 2);
+		g.setColor(Color.gray);
+		g.fillRect(healthBarX, healthBarY, healthBarWidth, HealthBarHeight);
+		
+		
+		
+		if(healthRemaining >= 0.5) {
+			primaryColor = new Color(0, 255, 0);
+			secondaryColor = new Color(0, 204, 0);
+			
+			g.setColor(secondaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth, HealthBarHeight);
+			
+			
+			g.setColor(primaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth-1, HealthBarHeight-1);
+		}
+		
+		else if((healthRemaining < 0.5) && (healthRemaining >= 0.25 )) {
+			primaryColor = new Color(255, 153, 0);
+			secondaryColor = new Color(204, 102, 0);
+			
+			g.setColor(secondaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth, HealthBarHeight);
+			
+			g.setColor(primaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth-1, HealthBarHeight-1);
+		}
+		
+		else if(healthRemaining < 0.25) {
+			primaryColor = new Color(255, 0, 0);
+			secondaryColor = new Color(204, 0, 0);
+			
+			g.setColor(secondaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth, HealthBarHeight);
+			
+			g.setColor(Color.red);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth-1, HealthBarHeight-1);
+		}
+	}
+	
+	public void drawStaminaBar(Graphics2D g) {
+		Color primaryColor;
+		Color secondaryColor;
+		
+		int staminaBarWidth = 80;
+		int staminaBarHeight = 5;
+		
+		int staminaBarX = getTempX() + 1;
+		int staminaBarY = getTempY() - 24;
+		
+		double staminaRemaining = (double)stamina/maxStamina;
+		double drawWidth = staminaRemaining * staminaBarWidth;
+		
+		//System.out.println("Health " + health + " / " + maxHealth);
+		//System.out.println("Fraction: " + healthRemaining);
+		//System.out.println();
+		g.setColor(Color.black);
+		g.fillRect(staminaBarX + 2, staminaBarY + 2, staminaBarWidth, staminaBarHeight);
+		g.setColor(Color.darkGray);
+		g.fillRect(staminaBarX - 1, staminaBarY - 1, staminaBarWidth + 2, staminaBarHeight + 2);
+		g.setColor(Color.gray);
+		g.fillRect(staminaBarX, staminaBarY, staminaBarWidth, staminaBarHeight);
+		
+		primaryColor = new Color(0, 0, 255);
+		secondaryColor = new Color(0, 0, 204);
+			
+		g.setColor(secondaryColor);
+		g.fillRect(staminaBarX, staminaBarY, (int) drawWidth, staminaBarHeight);
+			
+			
+		g.setColor(primaryColor);
+		g.fillRect(staminaBarX, staminaBarY, (int) drawWidth-1, staminaBarHeight-1);
+		
 	}
 
 }

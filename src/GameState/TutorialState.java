@@ -33,14 +33,12 @@ public class TutorialState extends GameState {
 	public void init() {
 		
 		tileMap = new TileMap(30);
-		tileMap.loadTiles("/Tilesets/grasstileset.gif");
-		//tileMap.loadTiles("/Tilesets/moonTileSet.gif");
+		tileMap.loadTiles("/Tilesets/grasstileset.png");
 		tileMap.loadMap("/Maps/level1-1.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
-		bg = new Background("/Backgrounds/grassbg1.gif",0.1);
-		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
+		bg = new Background("/Backgrounds/grassbg-960.png",0.1);
 		
 		player = new Player(tileMap);
 		player.setPosition(100, 100);

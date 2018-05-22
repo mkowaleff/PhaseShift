@@ -29,19 +29,22 @@ public class LevelSelectionState extends GameState {
 		this.gsm = gsm;
 		
 		try {
-			bg = new Background("/Backgrounds/menubg.gif",1);
+			
+			int multiplier = 3;
+			
+			bg = new Background("/Backgrounds/menubg-960.png",1);
 			bg.setPosition(0, 0);
 			bg.setVector(-0.5, 0);
 			
-			bg2 = new Background("/Backgrounds/menubg.gif", 1);
+			bg2 = new Background("/Backgrounds/menubg-960.png", 1);
 			bg2.setPosition(bg2.getWidth(), 0);
 			bg2.setVector(-0.5, 0);
 			
 			titleColor = new Color(128, 0, 128);
-			titleFont = new Font("Herculanum", Font.BOLD, 24);
+			titleFont = new Font("Herculanum", Font.BOLD, 36*multiplier);
 			
 			fontColor = new Color(48, 0, 128);
-			font = new Font("Bradley Hand", Font.BOLD, 20);
+			font = new Font("Bradley Hand", Font.BOLD, 20*multiplier);
 			
 			scrollingSound = new AudioPlayer("/SFX/scroll.wav");
 			selectionSound = new AudioPlayer("/SFX/select.wav");
@@ -77,26 +80,29 @@ public class LevelSelectionState extends GameState {
 		// Draw Title
 		g.setFont(titleFont);
 		g.setColor(Color.black);
-		g.drawString("New Game", 101, 41);
+		
+		int screenWidth = 960;
+		int stringWidth = g.getFontMetrics().stringWidth("New Game");
+		
+		g.drawString("New Game", screenWidth/2 - stringWidth/2 + 4, 144);
 		g.setColor(titleColor);
-		g.drawString("New Game", 100, 40);
+		g.drawString("New Game", screenWidth/2 - stringWidth/2, 140);
 		
 		
 		// Draw Menu Options
-		int[] xOffset = {0, 5, 5, -45};
 		g.setFont(font);
 		for(int i = 0; i < options.length; i++) {
-			
+			stringWidth = g.getFontMetrics().stringWidth(options[i]);
 			if(i == currentChoice) { 
 				g.setColor(fontColor); 
-				g.drawString(options[i], 116 + xOffset[i], 121 + i * 25);
-				g.setColor(Color.white);
+				g.drawString(options[i], screenWidth/2 - stringWidth/2 + 4, 354 + i * 75);
+				g.setColor(Color.red);
 			}
 			
 			else { 
 				g.setColor(fontColor); 
 			}
-			g.drawString(options[i], 115 + xOffset[i], 120 + i * 25);
+			g.drawString(options[i], screenWidth/2 - stringWidth/2, 350 + i * 75);
 			
 		}
 	}

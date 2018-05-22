@@ -21,8 +21,18 @@ public class Arrow extends MapObject {
 		facingRight = true;
 		
 		moveSpeed = 3.8;
-		if(right) dx = moveSpeed;
-		else dx = -moveSpeed;
+		
+		if(right) {
+			dx = moveSpeed;
+		}
+		
+		else {
+			dx = -moveSpeed;
+		}
+		
+		// Makes the arrow go down with gravity
+		dy = 0.1;
+		
 		
 		width = 30;
 		height = 30;
@@ -39,11 +49,6 @@ public class Arrow extends MapObject {
 			for(int i = 0; i < sprites.length; i++) {
 				sprites[i] = spritesheet.getSubimage(i*width, 0, width, height);	
 			}
-			
-			/*hitSprites = new BufferedImage[1];
-			for(int i = 0; i < hitSprites.length; i++) {
-				hitSprites[i] = spritesheet.getSubimage(i*width, height, width, height);
-			}*/
 			
 			animation = new Animation();
 			animation.setFrames(sprites);

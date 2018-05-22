@@ -37,19 +37,20 @@ public class PreferencesState extends GameState {
 		this.gsm = gsm;
 		
 		try {
-			bg = new Background("/Backgrounds/menubg.gif",1);
+			int multiplier = 3;
+			bg = new Background("/Backgrounds/menubg-960.png",1);
 			bg.setPosition(0, 0);
 			bg.setVector(-0.5, 0);
 			
-			bg2 = new Background("/Backgrounds/menubg.gif", 1);
+			bg2 = new Background("/Backgrounds/menubg-960.png", 1);
 			bg2.setPosition(bg2.getWidth(), 0);
 			bg2.setVector(-0.5, 0);
 			
 			titleColor = new Color(128, 0, 128);
-			titleFont = new Font("Herculanum", Font.BOLD, 24);
+			titleFont = new Font("Herculanum", Font.BOLD, 36*multiplier);
 			
 			fontColor = new Color(48, 0, 128);
-			font = new Font("Bradley Hand", Font.BOLD, 20);
+			font = new Font("Bradley Hand", Font.BOLD, 20*multiplier);
 			
 			scrollingSound = new AudioPlayer("/SFX/scroll.wav");
 			selectionSound = new AudioPlayer("/SFX/select.wav");
@@ -86,18 +87,21 @@ public class PreferencesState extends GameState {
 		// Draw Title
 		g.setFont(titleFont);
 		g.setColor(Color.black);
-		g.drawString("Preferences", 101, 41);
+		
+		int screenWidth = 960;
+		int stringWidth = g.getFontMetrics().stringWidth("Preferences");
+		
+		g.drawString("Preferences", screenWidth/2 - stringWidth/2 + 4, 144);
 		g.setColor(titleColor);
-		g.drawString("Preferences", 100, 40);
+		g.drawString("Preferences", screenWidth/2 - stringWidth/2, 140);
 		
 		// Draw Menu Options
 		g.setFont(font);
-		int[] xOffset = {0, -10, 5, -20};
 		for(int i = 0; i < options.length; i++) {
-			
+			stringWidth = g.getFontMetrics().stringWidth(options[i]);
 			if(i == currentChoice) { 
 				g.setColor(fontColor); 
-				g.drawString(options[i], 110 + xOffset[i], 121 + i * 25);
+				g.drawString(options[i], screenWidth/2 - stringWidth/2, 254 + i * 100);
 				g.setColor(Color.white);
 			}
 			
@@ -107,21 +111,83 @@ public class PreferencesState extends GameState {
 			
 			
 			if(i == 0) {
-				g.drawString(options[i] + tileSetOptions[currentTileSet], 110 + xOffset[i], 120 + i * 25);
+				g.drawString(options[i] + tileSetOptions[currentTileSet], screenWidth/2 - stringWidth/2, 250 + i * 100);
 			}
 			if(i == 1) {
-				g.drawString(options[i] + characterOptions[currentSkin], 110 + xOffset[i], 120 + i * 25);
+				g.drawString(options[i] + characterOptions[currentSkin], screenWidth/2 - stringWidth/2, 250 + i * 100);
 			}
 			if(i == 2) {
 				int result = soundSetting ? 0 : 1;
-				g.drawString(options[i] + soundOptions[result], 110 + xOffset[i], 120 + i * 25);
+				g.drawString(options[i] + soundOptions[result], screenWidth/2 - stringWidth/2, 250 + i * 100);
 			}
 			else {
-				g.drawString(options[i], 110 + xOffset[i], 120 + i * 25);
+				g.drawString(options[i], screenWidth/2 - stringWidth/2, 250 + i * 100);
 			}
 			
 		}
 	}
+	
+	
+	/*
+	 * Old Draw method: 
+	 * In order to center each panel of screen, the for loop needs to be redone with each two components per item list
+	 * 
+	 * 
+	 * 
+		// Draw Background
+		bg.draw(g);
+		bg2.draw(g);
+		
+		// Draw Title
+		g.setFont(titleFont);
+		g.setColor(Color.black);
+		
+		int screenWidth = 960;
+		int stringWidth = g.getFontMetrics().stringWidth("Preferences");
+		
+		g.drawString("Preferences", screenWidth/2 - stringWidth/2 + 4, 144);
+		g.setColor(titleColor);
+		g.drawString("Preferences", screenWidth/2 - stringWidth/2, 140);
+		
+		// Draw Menu Options
+		g.setFont(font);
+		for(int i = 0; i < options.length; i++) {
+			stringWidth = g.getFontMetrics().stringWidth(options[i]);
+			if(i == currentChoice) { 
+				if (i == 0) stringWidth = g.getFontMetrics().stringWidth(options[i] + tileSetOptions[currentTileSet]);
+				if (i == 1) stringWidth = g.getFontMetrics().stringWidth(options[i] + characterOptions[currentSkin]);
+				if (i == 2) stringWidth = g.getFontMetrics().stringWidth(options[i] + 1);
+					
+				g.setColor(fontColor); 
+				g.drawString(options[i], screenWidth/2 - stringWidth/2, 254 + i * 100);
+				g.setColor(Color.white);
+			}
+			
+			else { 
+				g.setColor(fontColor); 
+			}
+			
+			
+			if(i == 0) {
+				stringWidth = g.getFontMetrics().stringWidth(options[i] + tileSetOptions[currentTileSet]);
+				g.drawString(options[i] + tileSetOptions[currentTileSet], screenWidth/2 - stringWidth/2, 250 + i * 100);
+			}
+			if(i == 1) {
+				stringWidth = g.getFontMetrics().stringWidth(options[i] + characterOptions[currentSkin]);
+				g.drawString(options[i] + characterOptions[currentSkin], screenWidth/2 - stringWidth/2, 250 + i * 100);
+			}
+			if(i == 2) {
+				int result = soundSetting ? 0 : 1;
+				stringWidth = g.getFontMetrics().stringWidth(options[i] + soundOptions[result]);
+				g.drawString(options[i] + soundOptions[result], screenWidth/2 - stringWidth/2, 250 + i * 100);
+			}
+			else {
+				stringWidth = g.getFontMetrics().stringWidth(options[i]);
+				g.drawString(options[i], screenWidth/2 - stringWidth/2, 250 + i * 100);
+			}
+			
+		}
+	 */
 	
 	private void select() {
 		// TODO Write select function

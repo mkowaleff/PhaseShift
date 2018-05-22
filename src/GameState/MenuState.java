@@ -5,10 +5,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.JOptionPane;
 
 import Audio.AudioPlayer;
 
-public class MenuState extends GameState {
+public class MenuState extends GameState implements MouseMotionListener {
 	
 	private Background bg;
 	private Background bg2;
@@ -27,13 +31,19 @@ public class MenuState extends GameState {
 	
 	private AudioPlayer scrollingSound;
 	private AudioPlayer selectionSound;
+	private AudioPlayer backgroundMusic;
+	
+	private int mouseX;
+	private int mouseY;
 	
 	public MenuState(GameStateManager gsm) {
 		this.gsm = gsm;
 		
 		try {
-			//bg = new Background("/Backgrounds/menubg.gif", 1);
-			bg = new Background("/Backgrounds/menubg.png", 1);
+			
+			int multiplier = 3;
+			
+			bg = new Background("/Backgrounds/menubg-960.png", 1);
 			bg.setPosition(0, 0);
 			bg.setVector(-0.5,  0); // moving 0.1 pixels to the left
 			
@@ -41,18 +51,21 @@ public class MenuState extends GameState {
 			selectionSound = new AudioPlayer("/SFX/select.wav");
 			
 			//bg2 = new Background("/Backgrounds/menubg.gif", 1);
-			bg2 = new Background("/Backgrounds/menubg.png", 1);
+			bg2 = new Background("/Backgrounds/menubg-960.png", 1);
 			bg2.setPosition(bg2.getWidth(), 0);
 			bg2.setVector(-0.5, 0);
 			
 			titleColor = new Color(128, 0, 128);
-			titleFont = new Font("Herculanum", Font.BOLD, 48);
+			titleFont = new Font("Herculanum", Font.BOLD, 48*multiplier);
 			
 			creditsColor = Color.red;
-			creditsFont = new Font("Times New Roman", Font.PLAIN, 12);
+			creditsFont = new Font("HanziPen TC", Font.BOLD, 6*multiplier);
 			
 			fontColor = new Color(48, 0, 128);
-			font = new Font("Bradley Hand", Font.BOLD, 24);
+			font = new Font("Bradley Hand", Font.BOLD, 20*multiplier);
+			
+			backgroundMusic = new AudioPlayer("/Music/menutheme.mp3");
+			backgroundMusic.play();
 		}
 		
 		catch (Exception e) {
@@ -76,40 +89,55 @@ public class MenuState extends GameState {
 	
 	public void draw(Graphics2D g) {
 		
-		//draw background
+		//Draw Background
 		bg.draw(g);
 		bg2.draw(g);
 		
-		// draw title
+		// Center lines
+		// g.drawLine(480, 0, 480, 720);
+		// g.drawLine(0, 360, 960, 360);
+		
+		// Draw Title
 		g.setFont(titleFont);
 		g.setColor(Color.black);
-		g.drawString("Phase Shift", 32, 72);
+		
+		int screenWidth = 960;
+		int stringWidth = g.getFontMetrics().stringWidth("Phase Shift");
+		
+		g.drawString("Phase Shift", screenWidth/2 - stringWidth/2 + 4, 144);
 		g.setColor(titleColor);
-		g.drawString("Phase Shift", 30, 70);
+		g.drawString("Phase Shift", screenWidth/2 - stringWidth/2, 140);
 		
 		
+		
+		// Draw Credits
 		g.setFont(creditsFont);
 		g.setColor(creditsColor);
-		g.drawString("by Martin Kowaleff", 200, 85);
+		g.drawString("by Martin Kowaleff", 700, 170);
 		
-		// draw menu options
-		int[] xOffset = {0, 10, 0, 35, 35};
+		// Draw Mouse Coordinates
+		//g.setColor(Color.green);
+		//g.drawString(mouseX + ", " + mouseY, mouseX+50, mouseY+50);
+		
+		// Draw Menu Options
 		g.setFont(font);
 		for(int i = 0; i < options.length; i++) {
+			stringWidth = g.getFontMetrics().stringWidth(options[i]);
 			if(i == currentChoice) {
 				g.setColor(fontColor);
-				g.drawString(options[i], 116 + xOffset[i], 121+i*25);
-				g.setColor(Color.white);
+				g.drawString(options[i], screenWidth/2 - stringWidth/2 + 4, 354 + i*75);
+				g.setColor(Color.red);
 				
 			}
 			else {
 				g.setColor(fontColor);
 			}
-			g.drawString(options[i], 115 + xOffset[i], 120+i*25);
+			g.drawString(options[i], screenWidth/2 - stringWidth/2, 350 + i*75);
 		}
 	}
 	
 	private void select() {
+		backgroundMusic.stop();
 		if(currentChoice == 0) {
 			// NEW GAME
 			gsm.setState(GameStateManager.states.get("LEVELSELECTIONSTATE"));
@@ -128,7 +156,10 @@ public class MenuState extends GameState {
 		}
 		if(currentChoice == 4) {
 			// EXIT
-			System.exit(0);
+			int in = JOptionPane.showOptionDialog(null, "Are you sure you want to exit the game?", "Exit Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 0);
+			if(in == 0) {
+				System.exit(0);
+			}
 		}
 	}
 	
@@ -154,9 +185,34 @@ public class MenuState extends GameState {
 				currentChoice = 0;
 			}
 		}
+		
+		if(k == KeyEvent.VK_ESCAPE) {
+			int in = JOptionPane.showOptionDialog(null, "Are you sure you want to exit the game?", "Exit Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 0);
+			if(in == 0) {
+				System.exit(0);
+			}
+		}
 	}
-	
-	public void keyReleased(int k) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		mouseX = e.getX();
+		mouseY = e.getY();
+		
+	}
+
+	@Override
+	public void keyReleased(int k) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

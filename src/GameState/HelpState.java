@@ -26,7 +26,7 @@ public class HelpState extends GameState {
 		
 		try {
 			//bg = new Background("/Backgrounds/aieye.jpg", 1);
-			bg = new Background("/Backgrounds/menubg2.gif", 1);
+			bg = new Background("/Backgrounds/menubg-960.png", 1);
 			bg.setVector(-0.1,  0); // moving 0.1 pixels to the left
 			
 			titleColor = new Color(128, 0, 128);

@@ -2,9 +2,11 @@ package Entity.Enemies;
 import Entity.*;
 import TileMap.TileMap;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -30,7 +32,7 @@ public class Boar extends Enemy {
 		collisionWidth = 40;
 		collisionHeight = 30;
 		
-		health = maxHealth = 2;
+		health = maxHealth = 20;
 		damage = 1;
 		
 		
@@ -129,8 +131,83 @@ public class Boar extends Enemy {
 	public void draw(Graphics2D g) {
 		// if(notOnScreen()) return; // do not draw if it's not on the screen
 		setMapPosition();
-		
+		drawHealthBar(g);
 		super.draw(g);
+	}
+	
+	public void drawHealthBar(Graphics2D g) {
+		Color secondaryColor;
+		
+		int healthBarWidth = 80;
+		int HealthBarHeight = 5;
+		
+		int healthBarX = getTempX() + 1;
+		int healthBarY = getTempY() - 15;
+		
+		double healthRemaining = (double)health/maxHealth;
+		double drawWidth = healthRemaining * healthBarWidth;
+		
+		g.setColor(Color.black);
+		g.fillRect(healthBarX + 2, healthBarY + 2, healthBarWidth, HealthBarHeight);
+		g.setColor(Color.darkGray);
+		g.fillRect(healthBarX - 1, healthBarY - 1, healthBarWidth + 2, HealthBarHeight + 2);
+		g.setColor(Color.gray);
+		g.fillRect(healthBarX, healthBarY, healthBarWidth, HealthBarHeight);
+		
+		
+		
+		if(healthRemaining >= 0.5) {
+			
+			secondaryColor = new Color(0, 102, 0);
+			
+			g.setColor(secondaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth, HealthBarHeight);
+			
+			
+			g.setColor(Color.green);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth-1, HealthBarHeight-1);
+		}
+		
+		else if((healthRemaining < 0.5) && (healthRemaining >= 0.25 )) {
+			
+			secondaryColor = new Color(204, 102, 0);
+			
+			g.setColor(secondaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth, HealthBarHeight);
+			
+			g.setColor(Color.orange);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth-1, HealthBarHeight-1);
+		}
+		
+		else if(healthRemaining < 0.25) {
+			
+			secondaryColor = new Color(153, 0, 0);
+			
+			g.setColor(secondaryColor);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth, HealthBarHeight);
+			
+			g.setColor(Color.red);
+			g.fillRect(healthBarX, healthBarY, (int) drawWidth-1, HealthBarHeight-1);
+		}
+	}
+	
+	public void hit(int damage) { 
+		// the enemy gets hit
+		if(dead || flinching) return;
+		playWoundSound();
+		health -= damage;
+		
+		if(health < 0) health = 0;
+		if(health == 0) dead = true;
+		flinching = true;
+		flinchTimer = System.nanoTime();
+	}
+	
+	private void playWoundSound() {
+		Random rand = new Random();
+		int n = rand.nextInt(3) + 1;
+		sfx.get("wound" + n).play();
+		
 	}
 
 }

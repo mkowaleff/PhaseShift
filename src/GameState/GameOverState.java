@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JOptionPane;
+
 import Audio.AudioPlayer;
 import Main.GamePanel;
 import TileMap.Background;
@@ -32,24 +34,27 @@ public class GameOverState extends GameState {
 	public GameOverState(GameStateManager gsm) {
 
 		this.gsm = gsm;
+		
 		try {
 
-			bg = new Background("/Backgrounds/menubg.gif", 1);
+			int multiplier = 3;
+			
+			bg = new Background("/Backgrounds/menubg-960.png", 1);
 			bg.setPosition(0, 0);
 			bg.setVector(-0.5,  0); // moving 0.1 pixels to the left
 			
-			bg2 = new Background("/Backgrounds/menubg.gif", 1);
+			bg2 = new Background("/Backgrounds/menubg-960.png", 1);
 			bg2.setPosition(bg2.getWidth(), 0);
 			bg2.setVector(-0.5, 0);
 			
 			titleColor = new Color(128, 0, 128);
-			titleFont = new Font("Herculanum", Font.BOLD, 24);
+			titleFont = new Font("Herculanum", Font.BOLD, 36*multiplier);
 			
 			subtitleColor = Color.red;
-			subtitleFont = new Font("Herculanum", Font.PLAIN, 12);
+			subtitleFont = new Font("Herculanum", Font.PLAIN, 12*multiplier);
 			
 			fontColor = new Color(48, 0, 128);
-			font = new Font("Bradley Hand", Font.BOLD, 20);
+			font = new Font("Bradley Hand", Font.BOLD, 20*multiplier);
 			
 			scrollingSound = new AudioPlayer("/SFX/scroll.wav");
 			selectionSound = new AudioPlayer("/SFX/select.wav");
@@ -84,27 +89,34 @@ public class GameOverState extends GameState {
 		// draw title
 		g.setFont(titleFont);
 		g.setColor(Color.black);
-		g.drawString("Game Over", 101, 71);
+		
+		int screenWidth = 960;
+		int stringWidth = g.getFontMetrics().stringWidth("Game Over");
+		
+		g.drawString("Game Over", screenWidth/2 - stringWidth/2 + 4, 144);
 		g.setColor(titleColor);
-		g.drawString("Game Over", 100, 70);
+		g.drawString("Game Over", screenWidth/2 - stringWidth/2, 140);
 		
 		g.setFont(subtitleFont);
 		g.setColor(subtitleColor);
-		g.drawString("You have died!", 120, 85);
+		
+		stringWidth = g.getFontMetrics().stringWidth("You have died!");
+		
+		g.drawString("You have died!", screenWidth/2 - stringWidth/2, 185);
 
 		// draw menu options
-		int[] xOffset = {20, -10, -10};
 		g.setFont(font);
 		for(int i = 0; i < options.length; i++) {
+			stringWidth = g.getFontMetrics().stringWidth(options[i]);
 			if(i == currentChoice) {
 				g.setColor(fontColor);
-				g.drawString(options[i], 116 + xOffset[i], 141 + i * 25);
-				g.setColor(Color.white);
+				g.drawString(options[i], screenWidth/2 - stringWidth/2 + 4, 354 + i*75);
+				g.setColor(Color.red);
 			}
 			else {
 				g.setColor(fontColor); 
 			}
-			g.drawString(options[i], 115 + xOffset[i], 140 + i * 25);
+			g.drawString(options[i], screenWidth/2 - stringWidth/2, 350 + i*75);
 		}
 		
 	}
@@ -123,7 +135,10 @@ public class GameOverState extends GameState {
 		
 		if(currentChoice == 2) {
 			// exit
-			System.exit(0);
+			int in = JOptionPane.showOptionDialog(null, "Are you sure you want to exit the game?", "Exit Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 0);
+			if(in == 0) {
+				System.exit(0);
+			}
 		}
 	}
 

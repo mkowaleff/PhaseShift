@@ -174,6 +174,7 @@ public class TileMap {
 				int tempY = (int)y + row * tileSize;
 				
 				g.drawImage(tiles[r][c].getImage(), tempX, tempY, null);
+				g.setColor(Color.darkGray);
 				g.drawRect(tempX, tempY, tileSize, tileSize);
 			}
 		}

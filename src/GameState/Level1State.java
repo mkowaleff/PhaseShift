@@ -35,20 +35,20 @@ public class Level1State extends GameState {
 	
 	public void init() {
 		
-		tileMap = new TileMap(30);
-		tileMap.loadTiles("/Tilesets/grasstileset.gif");
+		tileMap = new TileMap(80);
+		tileMap.loadTiles("/Tilesets/grasstileset.png");
 		//tileMap.loadTiles("/Tilesets/moonTileSet.gif");
-		tileMap.loadMap("/Maps/CollisionTestLevel1.map");
+		tileMap.loadMap("/Maps/CollisionTestLevel2.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		
 		
-		bg = new Background("/Backgrounds/grassbg1.png",0.1);
+		bg = new Background("/Backgrounds/grassbg-960.png",0.1);
 		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
 		
 		player = new ElfPlayer(tileMap);
-		player.setPosition(90, 350);
+		player.setPosition(145, 915);
 		
 		populateEnemies();
 		
@@ -56,9 +56,9 @@ public class Level1State extends GameState {
 		
 		hud = new HUD(player);
 		
-		//backgroundMusic = new AudioPlayer("/Music/levelsong.mp3");
-		//backgroundMusic.play();
-		backgroundMusic = new AudioPlayer("/Music/theme.mp3");
+		
+		backgroundMusic = new AudioPlayer("/Music/menutheme.mp3");
+		backgroundMusic.stop();
 		//backgroundMusic.play();
 	}
 	
@@ -70,13 +70,21 @@ public class Level1State extends GameState {
 		Archer archer;
 		Boar boar;
 		
-		Point[] enemyLocations = {
+		/*Point[] enemyLocations = {
 				new Point(300, 320),
 				new Point(480, 320),
 				new Point(660, 320),
 				new Point(840, 320),
 				new Point(1020, 320),
 				new Point(1200, 320)
+		};*/
+		Point[] enemyLocations = {
+				new Point(490, 960),
+				new Point(800, 960),
+				new Point(1300, 960),
+				new Point(1800, 960),
+				new Point(2300, 960),
+				new Point(2800, 960)
 		};
 		
 		for(int i = 0; i < enemyLocations.length; i++) {
