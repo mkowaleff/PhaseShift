@@ -102,7 +102,7 @@ public class PreferencesState extends GameState {
 			if(i == currentChoice) { 
 				g.setColor(fontColor); 
 				g.drawString(options[i], screenWidth/2 - stringWidth/2, 254 + i * 100);
-				g.setColor(Color.white);
+				g.setColor(Color.red);
 			}
 			
 			else { 

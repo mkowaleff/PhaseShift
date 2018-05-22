@@ -44,7 +44,7 @@ public class Level1State extends GameState {
 		
 		
 		
-		bg = new Background("/Backgrounds/grassbg-960.png",0.1);
+		bg = new Background("/Backgrounds/grassbg-960-2.png",0.1);
 		//bg = new Background("/Backgrounds/moonbg1.gif", 0.1);
 		
 		player = new ElfPlayer(tileMap);
@@ -68,7 +68,7 @@ public class Level1State extends GameState {
 		
 		//Slugger s;
 		Archer archer;
-		Boar boar;
+		Zombie boar;
 		
 		/*Point[] enemyLocations = {
 				new Point(300, 320),
@@ -88,7 +88,7 @@ public class Level1State extends GameState {
 		};
 		
 		for(int i = 0; i < enemyLocations.length; i++) {
-			boar = new Boar(tileMap);
+			boar = new Zombie(tileMap);
 			boar.setPosition(enemyLocations[i].x, enemyLocations[i].y);
 			enemies.add(boar);
 		}
@@ -111,9 +111,13 @@ public class Level1State extends GameState {
 			Enemy e = enemies.get(i);
 			e.update();
 			if(e.isDead()) {
-				enemies.remove(i); 
-				i--;
-				explosions.add(new Explosion(e.getX(), e.getY()));
+				if(e.animation.hasPlayedOnce()) {
+					enemies.remove(i); 
+					i--;
+				}
+				
+				
+				//explosions.add(new Explosion(e.getX(), e.getY()));
 			}
 		}
 		
@@ -129,6 +133,7 @@ public class Level1State extends GameState {
 		
 		// Switch to game over screen
 		if(player.isDead()) {
+			System.out.println("Game Over!");
 			gsm.setState(4);
 		}
 	}

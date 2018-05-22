@@ -33,15 +33,15 @@ public class ElfPlayer extends MapObject {
 	private int meleeRange;
 	
 	
-	// can add more if we need the player to do more stuff
+	// Can add more if we need the player to do more stuff
 	
 	
-	// animations
+	// Animations
 	private ArrayList<BufferedImage[]> sprites;
 	// # of frames for each action
 	private final int[] numFrames = {7, 10, 10, 10, 6, 1};
 	
-	// animation actions
+	// Animation actions
 	private static final int IDLE = 0;
 	private static final int WALKING = 1;
 	private static final int SHOOTING = 2;
@@ -82,10 +82,8 @@ public class ElfPlayer extends MapObject {
 		
 		isDead = false;
 		
-		// load sprites
+		// Load Sprites
 		try {
-			
-			
 			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/grandelf.png"));
 			/* Row:
 			 * 1. Idle
@@ -258,12 +256,12 @@ public class ElfPlayer extends MapObject {
 	
 	public void update() {
 		
-		// update position
+		// Update Position
 		getNextPosition();
 		checkTileMapCollision();
 		setPosition(xtemp, ytemp);
 		
-		// check if attack has stopped
+		// Check if attack has stopped
 		if(currentAction == SHOOTING) {
 			if(animation.hasPlayedOnce()) isShooting = false; 
 		}
@@ -315,10 +313,10 @@ public class ElfPlayer extends MapObject {
 		}
 		else if(isAttackingMelee) {
 			if(currentAction != MELEE) {
+				playMeleeSound();
 				currentAction = MELEE;
 				animation.setFrames(sprites.get(MELEE));
 				animation.setDelay(100);
-				playMeleeSound();
 				width = 80;
 			}
 		}

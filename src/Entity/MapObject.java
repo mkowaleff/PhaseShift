@@ -45,7 +45,7 @@ public abstract class MapObject {
 	protected boolean bottomRight;
 	
 	// animation
-	protected Animation animation;
+	public Animation animation;
 	protected int currentAction;
 	protected int previousAction;
 	protected boolean facingRight;
@@ -257,10 +257,10 @@ public abstract class MapObject {
 			g.drawImage(animation.getImage(),(tempX + width), tempY, -width, height, null);
 		}
 		g.setColor(Color.green);
-		//g.drawRect(tempX, tempY, outBoxWidth, outBoxHeight);
+		g.drawRect(tempX, tempY, outBoxWidth, outBoxHeight);
 		
 		g.setColor(Color.red);
-		//g.drawRect(tempX + outBoxWidth/2 - collisionWidth/2, tempY + outBoxHeight/2 - collisionHeight/2, collisionWidth, collisionHeight);
+		g.drawRect(tempX + outBoxWidth/2 - collisionWidth/2, tempY + outBoxHeight/2 - collisionHeight/2, collisionWidth, collisionHeight);
 	}
 	
 	public int getTempX() {

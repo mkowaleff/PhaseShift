@@ -15,7 +15,7 @@ import Audio.AudioPlayer;
 
 // basic enemy that moves between walls
 
-public class Boar extends Enemy {
+public class Zombie extends Enemy {
 	
 	private boolean isDying;
 	private boolean isHurting;
@@ -25,13 +25,18 @@ public class Boar extends Enemy {
 	private int meleeDamage;
 	private int meleeRange;
 	
+	private double dxTemp; // speed before stopping
+	
 	// Motion
 	private boolean isMoving;
+	
+	// AI
+	private boolean hasDetectedPlayer;
 	
 	// Animations
 	private ArrayList<BufferedImage[]> sprites;
 	// # of frames for each action
-	private final int[] numFrames = {4, 8, 5, 5, 4};
+	private final int[] numFrames = {13, 12, 5, 9, 7};
 	
 	// Animation actions
 	private static final int IDLE = 0;
@@ -43,23 +48,25 @@ public class Boar extends Enemy {
 	
 	private HashMap<String, AudioPlayer> sfx;
 	
-	public Boar(TileMap tm) {
+	public Zombie(TileMap tm) {
 		super(tm);
 		
-		moveSpeed = 1;
-		maxSpeed = 1;
+		moveSpeed = 0.5;
+		maxSpeed = 0.5;
 		fallSpeed = 0.2;
 		maxFallSpeed = 10.0;
 		
 		width = 80; // dim of sprite
 		height = 80;
-		collisionWidth = 40;
-		collisionHeight = 30;
+		collisionWidth = 20;
+		collisionHeight = 60;
 		
-		health = maxHealth = 20;
-		damage = 1;
+		health = maxHealth = 40;
+		damage = 5;
 		
-		meleeDamage = 1;
+		hasDetectedPlayer = false;
+		
+		meleeDamage = 5;
 		meleeRange = 40;
 		
 		isDying = false;
@@ -69,7 +76,7 @@ public class Boar extends Enemy {
 		
 		// Load Sprites
 		try {
-			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Enemies/boar2.png"));
+			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Enemies/zombie.png"));
 			/* Row:
 			 * 1. Idle
 			 * 2. Walking
@@ -98,15 +105,20 @@ public class Boar extends Enemy {
 		animation = new Animation();
 		currentAction = WALKING;
 		animation.setFrames(sprites.get(WALKING));
-		animation.setDelay(150);
+		animation.setDelay(100);
 		right = true; // set it starting right
 		facingRight = true;
 		
 		sfx = new HashMap<String, AudioPlayer>();
-		sfx.put("death", new AudioPlayer("/SFX/boarDeath.mp3"));
-		sfx.put("wound1", new AudioPlayer("/SFX/boarWound1.mp3"));
-		sfx.put("wound2", new AudioPlayer("/SFX/boarWound2.mp3"));
-		sfx.put("wound3", new AudioPlayer("/SFX/boarWound3.mp3"));
+		sfx.put("death", new AudioPlayer("/SFX/zombieDeath.mp3"));
+		sfx.put("wound1", new AudioPlayer("/SFX/zombieWound1.mp3"));
+		sfx.put("wound2", new AudioPlayer("/SFX/zombieWound2.mp3"));
+		sfx.put("wound3", new AudioPlayer("/SFX/zombieWound3.mp3"));
+		sfx.put("wound4", new AudioPlayer("/SFX/zombieWound4.mp3"));
+		sfx.put("attack1", new AudioPlayer("/SFX/zombieAttack1.mp3"));
+		sfx.put("attack2", new AudioPlayer("/SFX/zombieAttack2.mp3"));
+		sfx.put("attack3", new AudioPlayer("/SFX/zombieAttack3.mp3"));
+		sfx.put("attack4", new AudioPlayer("/SFX/zombieAttack4.mp3"));
 	}
 	
 	
@@ -130,10 +142,23 @@ public class Boar extends Enemy {
 			}
 		}
 		if(isDying) {
-			dx = 0;
+			stop();
 		}
 		if(isDead) {
-			dx = 0;
+			stop();
+		}
+		if(isHurting) {
+			dxTemp = dx;
+			//System.out.println("dxTemp = " + dx);
+			
+			stop();
+			//System.out.println("[GNP]: Zombie is stopping.");
+			
+			if(animation.hasPlayedOnce()) {
+				dx = dxTemp;
+				//System.out.println("[GNP]: Zombie speed: " + dx);
+				isHurting = false;
+			}
 		}
 		
 		// falling
@@ -169,14 +194,18 @@ public class Boar extends Enemy {
 		setPosition(xtemp, ytemp);
 		
 		if(currentAction == DYING) {
-			//sfx.get("death").play();
 			if(animation.hasPlayedOnce()) {
-				//isDying = false;
 				isDead = true;
 			}
 		}
 		if(currentAction == HURT) {
-			if(animation.hasPlayedOnce()) isHurting = false;
+			if(animation.hasPlayedOnce()) {
+				isHurting = false;
+				//System.out.println("[UPDATE] Zombie speed: " + dx);
+				dx = moveSpeed;
+				//System.out.println("dx = " + dxTemp);
+				
+			}
 		}
 		
 		// Check Flinching (if hit)
@@ -186,19 +215,21 @@ public class Boar extends Enemy {
 			if(elapsed > 400) {
 				flinching = false;
 			}
+			
 			if(currentAction != HURT) {
 				playWoundSound();
+				System.out.println("Zombie is hurt!");
 				currentAction = HURT;
 				animation.setFrames(sprites.get(HURT));
-				animation.setDelay(100);
+				animation.setDelay(50);
 				width = 80;
 			}
+			
 		}
 		
 		// Set Animation
 		else if(isDying) {
 			if(currentAction != DYING) {
-				//dx = 0;
 				sfx.get("death").play();
 				currentAction = DYING;
 				animation.setFrames(sprites.get(DYING));
@@ -210,7 +241,7 @@ public class Boar extends Enemy {
 			if(currentAction != WALKING) {
 				currentAction = WALKING;
 				animation.setFrames(sprites.get(WALKING));
-				animation.setDelay(150);
+				animation.setDelay(100);
 				width = 80;
 			}
 		}
@@ -218,7 +249,7 @@ public class Boar extends Enemy {
 			if(currentAction != IDLE) {
 				currentAction = IDLE;
 				animation.setFrames(sprites.get(IDLE));
-				animation.setDelay(400);
+				animation.setDelay(100);
 				width = 80;
 			}
 		}
@@ -229,17 +260,17 @@ public class Boar extends Enemy {
 		
 		// AI
 		// Keep going in one direction until it hits a wall, then go to other direction	
-		if(isMoving) {
-		if(right && dx == 0) {
-			right = false;
-			left = true;
-			facingRight = false;
-		}
-		else if(left && dx == 0) {
-			right = true;
-			left = false;
-			facingRight = true;
-		}
+		if(isMoving && !isHurting) {
+			if(right && dx == 0) {
+				right = false;
+				left = true;
+				facingRight = false;
+			}
+			else if(left && dx == 0) {
+				right = true;
+				left = false;
+				facingRight = true;
+			}
 		}
 		
 		// update animation
@@ -326,15 +357,20 @@ public class Boar extends Enemy {
 			//if(animation.hasPlayedOnce() && currentAction == DYING) isDead = true;
 		}
 		flinching = true;
-		System.out.println("Boar is hit!");
+		//System.out.println("Zombie is hit!");
 		flinchTimer = System.nanoTime();
+		//System.out.println("flinchTimer: " + flinchTimer);
 	}
 	
 	private void playWoundSound() {
 		Random rand = new Random();
-		int n = rand.nextInt(3) + 1;
+		int n = rand.nextInt(4) + 1;
 		sfx.get("wound" + n).play();
 		
+	}
+	
+	public void stop() {
+		dx = 0;
 	}
 
 }

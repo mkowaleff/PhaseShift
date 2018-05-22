@@ -64,8 +64,8 @@ public class MenuState extends GameState implements MouseMotionListener {
 			fontColor = new Color(48, 0, 128);
 			font = new Font("Bradley Hand", Font.BOLD, 20*multiplier);
 			
-			backgroundMusic = new AudioPlayer("/Music/menutheme.mp3");
-			backgroundMusic.play();
+			backgroundMusic = new AudioPlayer("/Music/menutheme2.mp3");
+			//backgroundMusic.play();
 		}
 		
 		catch (Exception e) {
